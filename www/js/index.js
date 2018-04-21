@@ -36,6 +36,42 @@
           'message: ' + error.message + '\n');
  }
 
+var geoOptions = {
+    maximumAge: 60000,
+    timeout: 15000,
+    enableHighAccuracy: true
+};
+
+
+ function getPosition(){
+    cordova.plugins.diagnostic.isLocationAuthorized(
+        function(enabled){
+            if(!enabled){
+                return cordova.plugins.diagnostic.requestLocationAuthorization(
+                    function(status){
+                        alert(status);
+                        navigator.geolocation.getCurrentPosition(
+                            onSuccess,
+                            onError,
+                            geoOptions
+                        );
+                    },
+                    onError
+                );
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                onSuccess,
+                onError,
+                geoOptions
+            );
+
+        },
+        onError
+    );
+}
+
+
 
 
 var app = {
@@ -57,7 +93,15 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
 
-           navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        // cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
+        //     if (!enabled) {
+        //         cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
+        //
+        //         });
+        //     }
+        // });
+        // navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        getPosition();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {

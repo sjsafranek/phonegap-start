@@ -21,7 +21,8 @@
         following tag to your config.xml; you will still have the INTERNET
         permission on your app, which PhoneGap requires.
     -->
-    <preference name="permissions"                value="none"/>
+    <!-- <preference name="permissions"                value="none"/>
+
 
     <!-- Customize your app and platform with the preference element. -->
     <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
@@ -133,6 +134,9 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
+        <uses-permission android:name="android.permissoin.ACCESS_COARSE_LOCATION"/>
+        <uses-permission android:name="android.permissoin.ACCESS_FINE_LOCATION"/>
+        <uses-permission android:name="android.permissoin.ACCESS_LOCATION_EXTRA_COMMANDS"/>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
