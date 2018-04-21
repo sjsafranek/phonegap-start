@@ -106,14 +106,15 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-        // cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
-        //     if (!enabled) {
-        //         cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
-        //
-        //         });
-        //     }
-        // });
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
+            if (!enabled) {
+                return cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
+                    alert(status);
+                });
+            }
+            navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        });
+        // navigator.geolocation.getCurrentPosition(onSuccess, onError);
         // getPosition();
     },
     // Update DOM on a Received Event
