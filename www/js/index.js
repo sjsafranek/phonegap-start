@@ -24,21 +24,25 @@
  // }
 
     var onSuccess = function(position) {
-        alert('Latitude: '          + position.coords.latitude          + '\n' +
-            'Longitude: '         + position.coords.longitude         + '\n' +
-            'Altitude: '          + position.coords.altitude          + '\n' +
-            'Accuracy: '          + position.coords.accuracy          + '\n' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-            'Heading: '           + position.coords.heading           + '\n' +
-            'Speed: '             + position.coords.speed             + '\n' +
-            'Timestamp: '         + position.timestamp                + '\n');
+        $("#geolocation").html(
+            'Latitude: '          + position.coords.latitude          + '<br>' +
+            'Longitude: '         + position.coords.longitude         + '<br>' +
+            'Altitude: '          + position.coords.altitude          + '<br>' +
+            'Accuracy: '          + position.coords.accuracy          + '<br>' +
+            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '<br>' +
+            'Heading: '           + position.coords.heading           + '<br>' +
+            'Speed: '             + position.coords.speed             + '<br>' +
+            'Timestamp: '         + position.timestamp                + '<br>'
+        );
     };
 
     // onError Callback receives a PositionError object
     //
     function onError(error) {
-        alert('code: '    + error.code    + '\n' +
-            'message: ' + error.message + '\n');
+        $("#geolocation").html(
+            'code: '    + error.code    + '<br>' +
+            'message: ' + error.message + '<br>'
+        );
     }
 
 var geoOptions = {
@@ -54,22 +58,35 @@ function TripTrackerClient(api_server) {
     this.api_server = api_server;
 }
 
+TripTrackerClient.prototype._startTracking = function() {
+    var self = this;
+    clearInterval(this.interval);
+    this.interval = setInterval(function(){
+        app.fetchLocation();
+    }, 30000);
+}
+
+TripTrackerClient.prototype._stopTracking = function() {
+    var self = this;
+    clearInterval(this.interval);
+}
+
 TripTrackerClient.prototype.request = function(method, url, data, callback) {
     var self = this;
     $.ajax({
         contentType: 'application/json; charset=UTF-8',
         data: data,
         dataType: 'json',
-        url: self.apiserver + url,
+        url: self.api_server + url,
         type: method,
         success: function(data) {
             if ("error" == data.status) {
-                return callback(new Error(JSON.stringify(data)));
+                return callback && callback(new Error(JSON.stringify(data)));
             }
-            return callback(null, data);
+            callback && callback(null, data);
         },
         error: function(xhr,errmsg,err) {
-            return callback(errmsg);
+            callback && callback(errmsg);
         }
     });
 }
@@ -82,43 +99,44 @@ TripTrackerClient.prototype.DELETE = function(url, data, callback) {
     this.request("DELETE", url, data, callback);
 }
 
-TripTrackerClient.prototype.getDeviceId(callback) {
-    var device_id = window.localStorage.getItem('device_id');
+TripTrackerClient.prototype.getDeviceId = function(callback) {
+    var device_id = localStorage.getItem('device_id');
     if (device_id) {
-        return callback && callback(null, device_id)
+        return callback && callback(null, device_id);
     }
 
-    this.POST('/api/v1/device', function(err, res) {
-        window.localStorage.setItem('device_id', 'testing1234');
-
+    this.POST('/api/v1/device', {}, function(err, res) {
         if (err) {
             return callback && callback(err, res);
         }
-        window.localStorage.setItem('device_id', 'testing1234');
-        callback && callback(err, res);
+        localStorage.setItem('device_id', res.data.device.device_id);
+        callback && callback(err, res.data.device.device_id);
     });
 }
 
 TripTrackerClient.prototype.startTrip = function() {
+    var self = this;
+    this._startTracking();
     this.getDeviceId(function(err, device_id){
         if (err) {
+            console.log(err);
             return alert(err);
         }
-
-        self.POST('/api/v1/trip', {'device_id': device_id, 'position': '0,0'});
+        self.POST('/api/v1/trip?device_id='+device_id+'&position=0,0', {'device_id': device_id, 'position': '0,0'});
     });
 }
 
 TripTrackerClient.prototype.endTrip = function() {
+    var self = this;
+    this._stopTracking();
     this.getDeviceId(function(err, device_id){
         if (err) {
+            console.log(err);
             return alert(err);
         }
-
-        self.DELETE('/api/v1/trip', {'device_id': device_id, 'position': '0,0'});
+        self.DELETE('/api/v1/trip?device_id='+device_id+'&position=0,0', {'device_id': device_id, 'position': '0,0'});
     });
 }
-
 
 
 var client = new TripTrackerClient("http://10.11.104.129:5000");
@@ -139,7 +157,15 @@ var app = {
         document.addEventListener('deviceready', this.onDeviceReady, false);
 
         $('#startTrip').on('click', function(){
+            $('#startTrip').hide();
+            $('#endTrip').show();
             client.startTrip();
+        });
+
+        $('#endTrip').on('click', function(){
+            $('#endTrip').hide();
+            $('#startTrip').show();
+            client.endTrip();
         });
     },
     // deviceready Event Handler
@@ -148,8 +174,6 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-        // navigator.geolocation.getCurrentPosition(onSuccess, onError);
-
         // app.fetchLocation();
     },
 
