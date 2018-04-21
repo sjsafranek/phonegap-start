@@ -44,31 +44,37 @@ var geoOptions = {
 
 
  function getPosition(){
-    cordova.plugins.diagnostic.isLocationAuthorized(
-        function(enabled){
-            if(!enabled){
-                return cordova.plugins.diagnostic.requestLocationAuthorization(
-                    function(status){
-                        alert(status);
-                        navigator.geolocation.getCurrentPosition(
-                            onSuccess,
-                            onError,
-                            geoOptions
-                        );
-                    },
-                    onError
+     try {
+        cordova.plugins.diagnostic.isLocationAuthorized(
+            function(enabled){
+                if(!enabled){
+                    return cordova.plugins.diagnostic.requestLocationAuthorization(
+                        function(status){
+                            alert(status);
+                            navigator.geolocation.getCurrentPosition(
+                                onSuccess,
+                                onError,
+                                geoOptions
+                            );
+                        },
+                        onError
+                    );
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    onSuccess,
+                    onError,
+                    geoOptions
                 );
-            }
 
-            navigator.geolocation.getCurrentPosition(
-                onSuccess,
-                onError,
-                geoOptions
-            );
+            },
+            onError
+        );
+    }
+    catch(err) {
+        console.log(err);
+    }
 
-        },
-        onError
-    );
 }
 
 
