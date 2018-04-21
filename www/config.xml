@@ -64,7 +64,10 @@
     <plugin name="cordova-plugin-splashscreen" />
     <plugin name="cordova-plugin-vibration" /> -->
 
-    <plugin name="org.apache.cordova.geolocation" source="pgb" />
+    <!-- <plugin name="org.apache.cordova.geolocation" source="pgb" /> -->
+
+    <plugin name="cordova-plugin-geolocation" spec="~4.0.1" />
+    <plugin name="cordova-plugin-globalization" spec="~1.11.0" />
 
     <!-- Third party plugins -->
     <!-- A list of available plugins are available at https://build.phonegap.com/plugins -->
