@@ -131,9 +131,9 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
-            <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
             <!-- <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" /> -->
         </config-file>
     </platform>
