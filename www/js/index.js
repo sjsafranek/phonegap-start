@@ -110,8 +110,8 @@ var app = {
         //         });
         //     }
         // });
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-        // getPosition();
+        // navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        getPosition();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
