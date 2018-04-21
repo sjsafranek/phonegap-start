@@ -67,7 +67,7 @@
 
    <!-- <plugin name="cordova-plugin-geolocation" version="2.1.0" /> -->
     <plugin name="cordova-plugin-geolocation" spec="~4.0.1" />
-    <plugin name="cordova-plugin-globalization" spec="~1.11.0" />
+    <!-- <plugin name="cordova-plugin-globalization" spec="~1.11.0" /> -->
 
 
     <!-- Third party plugins -->
@@ -132,8 +132,8 @@
     <platform name="android">
         <allow-intent href="market:*" />
         <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+            <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
             <!-- <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" /> -->
         </config-file>
     </platform>
