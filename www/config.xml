@@ -68,7 +68,7 @@
    <!-- <plugin name="cordova-plugin-geolocation" version="2.1.0" /> -->
     <plugin name="cordova-plugin-geolocation" spec="~4.0.1" />
     <!-- <plugin name="cordova-plugin-globalization" spec="~1.11.0" /> -->
-    <plugin name="cordova.plugins.diagnostic" source="npm" />  
+    <plugin name="cordova.plugins.diagnostic" source="npm" />
 
 
 
@@ -134,9 +134,14 @@
     <platform name="android">
         <allow-intent href="market:*" />
         <config-file target="AndroidManifest.xml" parent="/*">
-            <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
-            <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
-            <!-- <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" /> -->
+
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+
         </config-file>
     </platform>
     <platform name="ios">

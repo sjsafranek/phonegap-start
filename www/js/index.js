@@ -110,8 +110,10 @@ try {
         cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
             if (!enabled) {
                 return cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
-                    // alert(status);
+                    alert("Authorization status is now: " + status);
                     navigator.geolocation.getCurrentPosition(onSuccess, onError);
+                }, function(error){
+                    alert(error);
                 });
             }
             navigator.geolocation.getCurrentPosition(onSuccess, onError);
