@@ -119,8 +119,7 @@ TripTrackerClient.prototype.startTrip = function() {
     this._startTracking();
     this.getDeviceId(function(err, device_id){
         if (err) {
-            console.log(err);
-            return alert(err);
+            return onError(err);
         }
         self.POST('/api/v1/trip?device_id='+device_id+'&position=0,0', {'device_id': device_id, 'position': '0,0'});
     });
@@ -131,15 +130,14 @@ TripTrackerClient.prototype.endTrip = function() {
     this._stopTracking();
     this.getDeviceId(function(err, device_id){
         if (err) {
-            console.log(err);
-            return alert(err);
+            return onError(err);
         }
         self.DELETE('/api/v1/trip?device_id='+device_id+'&position=0,0', {'device_id': device_id, 'position': '0,0'});
     });
 }
 
 
-var client = new TripTrackerClient("http://10.11.104.129:5000");
+var client = new TripTrackerClient("http://207.154.225.107:4000");
 
 
 
