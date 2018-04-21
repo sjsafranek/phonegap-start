@@ -42,6 +42,7 @@
           'message: ' + error.message + '\n');
  }
 
+/*
 var geoOptions = {
     // maximumAge: 60000,
     // timeout: 15000,
@@ -81,6 +82,8 @@ var geoOptions = {
     }
 
 }
+
+*/
 
 
 
