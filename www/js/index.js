@@ -102,6 +102,7 @@ TripTrackerClient.prototype.DELETE = function(url, data, callback) {
 TripTrackerClient.prototype.getDeviceId = function(callback) {
     var device_id = localStorage.getItem('device_id');
     if (device_id) {
+        $("#device_id").text(device_id);
         return callback && callback(null, device_id);
     }
 
@@ -109,6 +110,7 @@ TripTrackerClient.prototype.getDeviceId = function(callback) {
         if (err) {
             return callback && callback(err, res);
         }
+        $("#device_id").text(device_id);
         localStorage.setItem('device_id', res.data.device.device_id);
         callback && callback(err, res.data.device.device_id);
     });

@@ -26,24 +26,65 @@
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <!-- <link rel="stylesheet" type="text/css" href="css/index.css" /> -->
+        <link rel="stylesheet" type="text/css" href="ratchet-2.0.2/css/ratchet.min.css" />
+        <link rel="stylesheet" type="text/css" href="ratchet-2.0.2/css/ratchet-theme-android.min.css" />
+        <script type="text/javascript" src="ratchet-2.0.2/js/ratchet.min.js"></script>
         <title>Trip Tracker</title>
         <style>
-            body {
+            /*body {
                 font-size: 32px;
-            }
-            .button {
+            }*/
+            /*.button {
                 font-size: 38px;
                 background-color: lightblue;
                 border-radius: 4px;
                 border-color: black;
                 border-style: solid;
                 border-width: 1px;
-            }
+            }*/
         </style>
     </head>
     <body>
-        <div class="app">
+        <header class="bar bar-nav">
+            <a>
+                <h1 class="title">Trip Tracker</h1>
+            </a>
+        </header>
+        <div class="content">
+            <div>
+                <label>Divice Id:</label>
+                <span id="device_id"></span>
+            </div>
+            <!-- <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div> -->
+            <!-- <button id="startTrip">Start Trip</button> -->
+            <!-- <button id="endTrip" style="display:none;">End Trip</button> -->
+
+            <!-- Block button in standard bar fixed below top bar -->
+            <!-- <div class="bar bar-standard bar-header-secondary">
+              <button id="startTrip" class="btn btn-block">Start Trip</button>
+            </div>
+
+            <div class="bar bar-standard bar-header-secondary">
+              <button id="endTrip" class="btn btn-block">End Trip</button>
+            </div> -->
+
+            <div id="geolocation"></div>
+
+        </div>
+
+        <!-- Icons in standard bar fixed to the bottom of the screen -->
+        <div class="bar bar-standard bar-footer">
+            <button id="startTrip" class="btn btn-block">Start Trip</button>
+            <button id="endTrip" class="btn btn-block">End Trip</button>
+          <!-- <a class="icon icon-compose pull-left"></a> -->
+          <!-- <a class="icon icon-gear pull-right"></a> -->
+        </div>
+
+        <!-- <div class="app">
             <h1>PhoneGap</h1>
             <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
@@ -52,7 +93,7 @@
             <div class="button" id="startTrip">Start Trip</div>
             <div class="button" id="endTrip" style="display:none;">End Trip</div>
             <div id="geolocation"></div>
-        </div>
+        </div> -->
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
