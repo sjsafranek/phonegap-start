@@ -106,6 +106,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+try {
         cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
             if (!enabled) {
                 return cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
@@ -114,6 +115,10 @@ var app = {
             }
             navigator.geolocation.getCurrentPosition(onSuccess, onError);
         });
+}
+catch(err) {
+    alert(err);
+}
         // navigator.geolocation.getCurrentPosition(onSuccess, onError);
         // getPosition();
     },
