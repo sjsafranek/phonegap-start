@@ -18,6 +18,12 @@
  */
 
 
+
+ // if (cordova.plugins.backgroundMode.isEnabled() == false) {
+ //     cordova.plugins.backgroundMode.enable();
+ // }
+
+
  var onSuccess = function(position) {
         alert('Latitude: '          + position.coords.latitude          + '\n' +
               'Longitude: '         + position.coords.longitude         + '\n' +
@@ -37,9 +43,9 @@
  }
 
 var geoOptions = {
-    maximumAge: 60000,
-    timeout: 15000,
-    enableHighAccuracy: true
+    // maximumAge: 60000,
+    // timeout: 15000,
+    // enableHighAccuracy: true
 };
 
 
@@ -50,7 +56,6 @@ var geoOptions = {
                 if(!enabled){
                     return cordova.plugins.diagnostic.requestLocationAuthorization(
                         function(status){
-                            alert(status);
                             navigator.geolocation.getCurrentPosition(
                                 onSuccess,
                                 onError,
@@ -98,7 +103,6 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-
         // cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
         //     if (!enabled) {
         //         cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
@@ -106,8 +110,8 @@ var app = {
         //         });
         //     }
         // });
-        // navigator.geolocation.getCurrentPosition(onSuccess, onError);
-        getPosition();
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        // getPosition();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
