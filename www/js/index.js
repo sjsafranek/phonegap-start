@@ -23,31 +23,31 @@
  //     cordova.plugins.backgroundMode.enable();
  // }
 
-    var onSuccess = function(position) {
-        $("#geolocation").html(
-            'Latitude: '          + position.coords.latitude          + '<br>' +
-            'Longitude: '         + position.coords.longitude         + '<br>' +
-            'Altitude: '          + position.coords.altitude          + '<br>' +
-            'Accuracy: '          + position.coords.accuracy          + '<br>' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '<br>' +
-            'Heading: '           + position.coords.heading           + '<br>' +
-            'Speed: '             + position.coords.speed             + '<br>' +
-            'Timestamp: '         + position.timestamp                + '<br>'
-        );
-    };
+var onSuccess = function(position) {
+    $("#geolocation").html(
+        'Latitude: '          + position.coords.latitude          + '<br>' +
+        'Longitude: '         + position.coords.longitude         + '<br>' +
+        'Altitude: '          + position.coords.altitude          + '<br>' +
+        'Accuracy: '          + position.coords.accuracy          + '<br>' +
+        'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '<br>' +
+        'Heading: '           + position.coords.heading           + '<br>' +
+        'Speed: '             + position.coords.speed             + '<br>' +
+        'Timestamp: '         + position.timestamp                + '<br>'
+    );
+};
 
-    // onError Callback receives a PositionError object
-    //
-    function onError(error) {
-        $("#geolocation").html(
-            'code: '    + error.code    + '<br>' +
-            'message: ' + error.message + '<br>'
-        );
-    }
+// onError Callback receives a PositionError object
+//
+function onError(error) {
+    $("#geolocation").html(
+        'code: '    + error.code    + '<br>' +
+        'message: ' + error.message + '<br>'
+    );
+}
 
 var geoOptions = {
     maximumAge: 60000,
-    timeout: 15000,
+    timeout: 20000,
     enableHighAccuracy: true
 };
 
@@ -62,7 +62,12 @@ TripTrackerClient.prototype._startTracking = function() {
     var self = this;
     clearInterval(this.interval);
     this.interval = setInterval(function(){
-        app.fetchLocation();
+        app.fetchLocation(
+            function(position){
+                onSuccess(position);
+                self.PUT('/api/v1/'+device_id+'/waypoint?position='+position.coords.longitude+','+position.coords.latitude);
+            }
+        );
     }, 30000);
 }
 
@@ -99,6 +104,10 @@ TripTrackerClient.prototype.DELETE = function(url, data, callback) {
     this.request("DELETE", url, data, callback);
 }
 
+TripTrackerClient.prototype.PUT = function(url, data, callback) {
+    this.request("PUT", url, data, callback);
+}
+
 TripTrackerClient.prototype.getDeviceId = function(callback) {
     var device_id = localStorage.getItem('device_id');
     if (device_id) {
@@ -118,24 +127,32 @@ TripTrackerClient.prototype.getDeviceId = function(callback) {
 
 TripTrackerClient.prototype.startTrip = function() {
     var self = this;
-    this._startTracking();
-    this.getDeviceId(function(err, device_id){
-        if (err) {
-            return onError(err);
+    app.fetchLocation(
+        function(position) {
+            self.getDeviceId(function(err, device_id){
+                if (err) {
+                    return onError(err);
+                }
+                self.POST('/api/v1/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
+                self._startTracking();
+            })
         }
-        self.POST('/api/v1/trip?device_id='+device_id+'&position=0,0', {'device_id': device_id, 'position': '0,0'});
-    });
+    );
 }
 
 TripTrackerClient.prototype.endTrip = function() {
     var self = this;
     this._stopTracking();
-    this.getDeviceId(function(err, device_id){
-        if (err) {
-            return onError(err);
+    app.fetchLocation(
+        function(position) {
+            self.getDeviceId(function(err, device_id){
+                if (err) {
+                    return onError(err);
+                }
+                self.DELETE('/api/v1/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
+            })
         }
-        self.DELETE('/api/v1/trip?device_id='+device_id+'&position=0,0', {'device_id': device_id, 'position': '0,0'});
-    });
+    );
 }
 
 
@@ -177,15 +194,17 @@ var app = {
         // app.fetchLocation();
     },
 
-    fetchLocation: function(){
+    fetchLocation: function(successCallback, errorCallback){
         try {
             cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
                 if (!enabled) {
                     return cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
                         // alert("Authorization status is now: " + status);
-                        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+                        navigator.geolocation.getCurrentPosition(
+                            successCallback || onSuccess,
+                            errorCallback || onError);
 
-                        setTimeout(app.fetchLocation, 60000);
+                        // setTimeout(app.fetchLocation, 60000);
                     }, function(error){
                         alert(error);
                     });
