@@ -85,12 +85,14 @@ TripTrackerClient.prototype.request = function(method, url, data, callback) {
         url: self.api_server + url,
         type: method,
         success: function(data) {
+            alert(data);
             if ("error" == data.status) {
                 return callback && callback(new Error(JSON.stringify(data)));
             }
             callback && callback(null, data);
         },
         error: function(xhr,errmsg,err) {
+            alert(data);
             callback && callback(errmsg);
         }
     });
@@ -184,6 +186,12 @@ var app = {
             $('#startTrip').show();
             client.endTrip();
         });
+
+        $("#newDevice").on('click', function(){
+            client.getDeviceId(function(err, device_id){
+                err && onError(err);
+            });
+        })
     },
     // deviceready Event Handler
     //
