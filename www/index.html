@@ -48,23 +48,22 @@
     </head>
     <body>
         <header class="bar bar-nav">
-            <a>
+            <button class="btn pull-right btn-nav" id="newDevice">
+                New Device
+            </button>
                 <h1 class="title">Trip Tracker</h1>
-            </a>
         </header>
         <div class="content">
 
-            <div class="bar bar-standard bar-header-secondary">
-              <button id="newDevice" class="btn btn-block">New Device</button>
-
-                <form class="input-group">
-                    <div class="input-row">
-                      <label>Device Id</label>
-                      <span id="device_id"></span>
-                    </div>
-                </form>
-            </div>
-
+            <ul class="table-view">
+                <li class="table-view-cell" >
+                    <label>Device ID:</label>
+                    <span id="device_id"></span>
+                </li>
+                <li class="table-view-cell" >
+                    <div class="card" id="geolocation"></div>
+                </li>
+            </ul>
 
         <!-- Icons in standard bar fixed to the bottom of the screen -->
         <div class="bar bar-standard bar-footer">
@@ -72,16 +71,7 @@
             <button id="endTrip" class="btn btn-block btn-negative" style="display:none;" >End Trip</button>
         </div>
 
-        <!-- <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-            <div class="button" id="startTrip">Start Trip</div>
-            <div class="button" id="endTrip" style="display:none;">End Trip</div>
-            <div id="geolocation"></div>
-        </div> -->
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>

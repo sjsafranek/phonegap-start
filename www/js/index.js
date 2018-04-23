@@ -128,7 +128,7 @@ TripTrackerClient.prototype.createDevice = function(callback) {
         if (err) {
             return callback && callback(err, res);
         }
-        $("#device_id").text(device_id);
+        $("#device_id").text(res.data.device.device_id);
         localStorage.setItem('device_id', res.data.device.device_id);
         callback && callback(err, res.data.device.device_id);
     });
