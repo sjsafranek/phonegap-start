@@ -62,12 +62,17 @@ TripTrackerClient.prototype._startTracking = function() {
     var self = this;
     clearInterval(this.interval);
     this.interval = setInterval(function(){
-        app.fetchLocation(
-            function(position){
-                onSuccess(position);
-                self.PUT('/api/v1/'+device_id+'/waypoint?position='+position.coords.longitude+','+position.coords.latitude);
+        client.getDeviceId(function(err, device_id){
+            if (err) {
+                return onError(err);
             }
-        );
+            app.fetchLocation(
+                function(position){
+                    onSuccess(position);
+                    self.PUT('/api/v1/device/'+device_id+'/waypoint?position='+position.coords.longitude+','+position.coords.latitude);
+                }
+            );
+        });
     }, 30000);
 }
 
@@ -85,14 +90,12 @@ TripTrackerClient.prototype.request = function(method, url, data, callback) {
         url: self.api_server + url,
         type: method,
         success: function(data) {
-            alert(data);
             if ("error" == data.status) {
                 return callback && callback(new Error(JSON.stringify(data)));
             }
             callback && callback(null, data);
         },
         error: function(xhr,errmsg,err) {
-            alert(data);
             callback && callback(errmsg);
         }
     });
@@ -117,6 +120,10 @@ TripTrackerClient.prototype.getDeviceId = function(callback) {
         return callback && callback(null, device_id);
     }
 
+    this.createDevice(callback);
+}
+
+TripTrackerClient.prototype.createDevice = function(callback) {
     this.POST('/api/v1/device', {}, function(err, res) {
         if (err) {
             return callback && callback(err, res);
@@ -135,7 +142,7 @@ TripTrackerClient.prototype.startTrip = function() {
                 if (err) {
                     return onError(err);
                 }
-                self.POST('/api/v1/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
+                self.POST('/api/v1/device/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
                 self._startTracking();
             })
         }
@@ -151,7 +158,7 @@ TripTrackerClient.prototype.endTrip = function() {
                 if (err) {
                     return onError(err);
                 }
-                self.DELETE('/api/v1/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
+                self.DELETE('/api/v1/device/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
             })
         }
     );
@@ -188,7 +195,7 @@ var app = {
         });
 
         $("#newDevice").on('click', function(){
-            client.getDeviceId(function(err, device_id){
+            client.createDevice(function(err, device_id){
                 err && onError(err);
             });
         })
@@ -203,16 +210,18 @@ var app = {
     },
 
     fetchLocation: function(successCallback, errorCallback){
+        if (typeof(cordova) == 'undefined') {
+            return navigator.geolocation.getCurrentPosition(
+                successCallback || onSuccess,
+                errorCallback || onError);
+        }
         try {
             cordova.plugins.diagnostic.isLocationAuthorized(function(enabled){
                 if (!enabled) {
                     return cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
-                        // alert("Authorization status is now: " + status);
                         navigator.geolocation.getCurrentPosition(
                             successCallback || onSuccess,
                             errorCallback || onError);
-
-                        // setTimeout(app.fetchLocation, 60000);
                     }, function(error){
                         alert(error);
                     });
