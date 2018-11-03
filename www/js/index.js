@@ -56,12 +56,16 @@ var geoOptions = {
 
 function TripTrackerClient(api_server) {
     this.api_server = api_server;
+    this.tracking = false;
 }
 
 TripTrackerClient.prototype._startTracking = function() {
     var self = this;
-    clearInterval(this.interval);
-    this.interval = setInterval(function(){
+
+    if (this.tracking) {
+        console.log("tracking");
+    // clearInterval(this.interval);
+    // this.interval = setInterval(function(){
         client.getDeviceId(function(err, device_id){
             if (err) {
                 return onError(err);
@@ -70,15 +74,20 @@ TripTrackerClient.prototype._startTracking = function() {
                 function(position){
                     onSuccess(position);
                     self.PUT('/api/v1/device/'+device_id+'/waypoint?position='+position.coords.longitude+','+position.coords.latitude);
+                    setTimeout(function(){
+                        self._startTracking();
+                    }, 15000);
                 }
             );
         });
-    }, 30000);
+    // }, 30000);
+    }
 }
 
 TripTrackerClient.prototype._stopTracking = function() {
     var self = this;
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
+    this.tracking = false;
 }
 
 TripTrackerClient.prototype.request = function(method, url, data, callback) {
@@ -143,6 +152,7 @@ TripTrackerClient.prototype.startTrip = function() {
                     return onError(err);
                 }
                 self.POST('/api/v1/device/'+device_id+'/trip?position='+position.coords.longitude+','+position.coords.latitude);
+                self.tracking = true;
                 self._startTracking();
             })
         }
@@ -152,6 +162,7 @@ TripTrackerClient.prototype.startTrip = function() {
 TripTrackerClient.prototype.endTrip = function() {
     var self = this;
     this._stopTracking();
+    this.tracking = false;
     app.fetchLocation(
         function(position) {
             self.getDeviceId(function(err, device_id){
